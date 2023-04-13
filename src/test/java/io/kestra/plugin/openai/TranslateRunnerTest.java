@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.is;
  * test to configure in-memory runner.
  */
 @MicronautTest
-class ExampleRunnerTest {
+class TranslateRunnerTest {
     @Inject
     protected MemoryRunner runner;
 
@@ -38,7 +38,7 @@ class ExampleRunnerTest {
 
     @BeforeEach
     protected void init() throws IOException, URISyntaxException {
-        repositoryLoader.load(Objects.requireNonNull(ExampleRunnerTest.class.getClassLoader().getResource("flows")));
+        repositoryLoader.load(Objects.requireNonNull(TranslateRunnerTest.class.getClassLoader().getResource("flows")));
         this.runner.run();
     }
 
