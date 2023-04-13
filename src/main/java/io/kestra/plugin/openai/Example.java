@@ -1,4 +1,4 @@
-package io.kestra.plugin.templates;
+package io.kestra.plugin.openai;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;

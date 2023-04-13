@@ -1,4 +1,4 @@
-package io.kestra.plugin.templates;
+package io.kestra.plugin.openai;
 
 import com.google.common.collect.ImmutableMap;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
