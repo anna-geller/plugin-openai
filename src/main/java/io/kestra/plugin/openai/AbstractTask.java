@@ -18,6 +18,8 @@ import lombok.experimental.SuperBuilder;
 public abstract class AbstractTask extends Task implements OpenAiInterface{
     protected String apiKey;
 
+    protected String model;
+
     protected OpenAiService client(RunContext runContext) throws IllegalVariableEvaluationException {
         String apiKey = runContext.render(this.apiKey);
 
