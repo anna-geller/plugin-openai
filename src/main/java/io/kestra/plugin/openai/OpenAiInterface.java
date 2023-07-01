@@ -12,12 +12,9 @@ public interface OpenAiInterface {
     @PluginProperty(dynamic = true)
     @NotNull
     String getApiKey();
-
     @Schema(
-        title = "Id of the model tu use",
-        description = "See the model endpoint compatibility table for details: https://platform.openai.com/docs/models/how-we-use-your-data."
+        title = "A unique identifier representing your end-user."
     )
     @PluginProperty(dynamic = true)
-    @NotNull
-    String getModel();
+    String getUser();
 }

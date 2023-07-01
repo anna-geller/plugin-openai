@@ -7,6 +7,7 @@ import com.theokanning.openai.completion.chat.ChatCompletionResult;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.service.OpenAiService;
 import io.kestra.core.exceptions.IllegalVariableEvaluationException;
+import io.kestra.core.models.annotations.PluginProperty;
 import io.kestra.core.models.executions.metrics.Counter;
 import io.kestra.core.models.tasks.RunnableTask;
 import io.kestra.core.runners.RunContext;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -73,9 +75,12 @@ public class ChatCompletion extends AbstractTask implements RunnableTask<ChatCom
     )
     private Map<String, Integer> logitBias;
     @Schema(
-        title = "A unique identifier representing your end-user."
+        title = "Id of the model tu use",
+        description = "See the model endpoint compatibility table for details: https://platform.openai.com/docs/models/model-endpoint-compatibility."
     )
-    private String user;
+    @PluginProperty(dynamic = true)
+    @NotNull
+    private String model;
 
     @Override
     public ChatCompletion.Output run(RunContext runContext) throws Exception {
