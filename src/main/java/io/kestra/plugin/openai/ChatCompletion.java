@@ -26,57 +26,85 @@ import java.util.Map;
 @Getter
 @NoArgsConstructor
 @Schema(
-    title = "Given a list of messages comprising a conversation, the model will return a response.",
-    description = "For more informations, refer to: https://platform.openai.com/docs/api-reference/chat/create"
+    title = "Given a prompt, get a response from an LLM using the [OpenAI’s Chat Completions API](https://platform.openai.com/docs/api-reference/chat/create)",
+    description = "For more information, refer to the [Chat Completions API docs](https://platform.openai.com/docs/guides/gpt/chat-completions-api)"
+)
+@Plugin(
+    examples = {
+        @Example(
+            title = "Based on a prompt input, generate a completion response and pass it to a downstream task",
+            full = true,
+            code = {
+                "id: openAI",
+                "namespace: dev",
+                "",
+                "inputs:",
+                "  - name: prompt",
+                "    type: STRING",
+                "    defaults: What is data orchestration?",
+                "",
+                "tasks:",
+                "  - id: completion",
+                "    type: io.kestra.plugin.openai.ChatCompletion",
+                "    apiKey: \"yourOpenAIapiKey\"",
+                "    model: gpt-3.5-turbo-0613",
+                "    prompt: \"{{inputs.prompt}}\"",
+                "",
+                "  - id: response",
+                "    type: io.kestra.core.tasks.debugs.Return",
+                "    format: \"{{outputs.completion.choices[0].message.content}}\""
+            }
+        )
+    }
 )
 public class ChatCompletion extends AbstractTask implements RunnableTask<ChatCompletion.Output> {
     @Schema(
         title = "A list of messages comprising the conversation so far.",
-        description = "Required if prompt not set."
+        description = "Required if prompt is not set."
     )
     private List<ChatMessage> messages;
     @Schema(
-        title = "Message to send to the API as prompt. Will be send as a user.",
-        description = "If not set, messages are required and the last will be take as input by the API."
+        title = "The prompt(s) to generate completions for. By default, this prompt will be sent as a `user` role.",
+        description = "If not provided, make sure to set the `messages` property."
     )
     private String prompt;
     @Schema(
-        title = "What sampling temperature to use, between 0 and 2."
+        title = "What sampling temperature to use, between 0 and 2. Defaults to 1."
     )
     private Double temperature;
     @Schema(
-        title = "An alternative to sampling with temperature, where the model considers the results of the tokens with top_p probability mass."
+        title = "An alternative to sampling with temperature, where the model considers the results of the tokens with top_p probability mass. Defaults to 1."
     )
     private Double topP;
 
     @Schema(
-        title = "How many chat completion choices to generate for each input message."
+        title = "How many chat completion choices to generate for each input message. Defaults to 1."
     )
     private Integer n;
     @Schema(
-        title = "Up to 4 sequences where the API will stop generating further tokens."
+        title = "Up to 4 sequences where the API will stop generating further tokens. Defaults to null."
     )
     private List<String> stop;
     @Schema(
-        title = "The maximum number of tokens to generate in the chat completion."
+        title = "The maximum number of tokens to generate in the chat completion. No limits are set by default."
     )
     private Integer maxTokens;
     @Schema(
-        title = "Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far."
+        title = "Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far. Defaults to 0."
     )
     private Double presencePenalty;
 
     @Schema(
-        title = "Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far."
+        title = "Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far. Defaults to 0."
     )
     private Double frequencyPenalty;
     @Schema(
-        title = "Modify the likelihood of specified tokens appearing in the completion."
+        title = "Modify the likelihood of specified tokens appearing in the completion. Defaults to null."
     )
     private Map<String, Integer> logitBias;
     @Schema(
-        title = "Id of the model tu use",
-        description = "See the model endpoint compatibility table for details: https://platform.openai.com/docs/models/model-endpoint-compatibility."
+        title = "ID of the model to use e.g. `'gpt-4'`",
+        description = "See the [OpenAI model's documentation page](https://platform.openai.com/docs/models/overview) for more details."
     )
     @PluginProperty(dynamic = true)
     @NotNull
@@ -87,7 +115,7 @@ public class ChatCompletion extends AbstractTask implements RunnableTask<ChatCom
         OpenAiService client = this.client(runContext);
 
         if (this.messages == null && this.prompt == null) {
-            throw new Exception("At least messages or prompt must be set");
+            throw new Exception("Either `messages` or `prompt` must be set");
         }
 
         List<String> stop = this.stop != null ? runContext.render(this.stop) : null;
@@ -143,7 +171,7 @@ public class ChatCompletion extends AbstractTask implements RunnableTask<ChatCom
     @Getter
     public static class Output implements io.kestra.core.models.tasks.Output {
         @Schema(
-            title = "Unique id assigned to this chat completion."
+            title = "Unique ID assigned to this Chat Completion."
         )
         String id;
         @Schema(

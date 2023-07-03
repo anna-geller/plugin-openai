@@ -26,15 +26,15 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @Schema(
-    title = "Creates an image given a prompt.",
-    description = "For more informations, refer to: https://platform.openai.com/docs/api-reference/images/create"
+    title = "Given a prompt, create an image",
+    description = "For more information, refer to the [OpenAI Image Generation API docs](https://platform.openai.com/docs/api-reference/images/create)"
 )
 public class CreateImage extends AbstractImageGeneration implements RunnableTask<CreateImage.Output> {
     @Schema(
-        title = "If you want to download generated images"
+        title = "Whether you want to automatically download generated images"
     )
     @Builder.Default
-    private Boolean download = false;
+    private Boolean download = true;
 
     @Override
     public CreateImage.Output run(RunContext runContext) throws Exception {
@@ -80,11 +80,11 @@ public class CreateImage extends AbstractImageGeneration implements RunnableTask
     @Getter
     public static class Output implements io.kestra.core.models.tasks.Output {
         @Schema(
-            title = "The creation time in epoch seconds."
+            title = "The creation time in epoch seconds"
         )
         long created;
         @Schema(
-            title = "Generated images data"
+            title = "Metadata of generated images"
         )
         List<Image> data;
         @Schema(
